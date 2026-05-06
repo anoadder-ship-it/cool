@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "presence": {
+      "$sessionId": {
+        // Any authenticated session can write its own presence node
+        ".read":  "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['online', 'lastSeen'])"
+      },
+      // Reading the full presence list (for counting) is public
+      ".read": true
+    },
+    // Block everything else
+    "$other": {
+      ".read":  false,
+      ".write": false
+    }
+  }
+}

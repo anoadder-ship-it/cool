@@ -1,0 +1,33 @@
+
+
+  NFT Hater Workspace
+    ✔ should initialize config correctly
+    1) should burn NFT and pay fee
+    2) should fail burn with wrong treasury
+    ✔ should pay premium fee
+
+
+  2 passing (121ms)
+  2 failing
+
+  1) NFT Hater Workspace
+       should burn NFT and pay fee:
+     Error: [38;5;239mProgram 11111111111111111111111111111111 invoke [1][0m
+[38;5;239mAllocate: 'to' account Address { address: EN7A88GJW5e5tJU2ARmhDvQMYeB9wLReBr3WdVXgz6TS, base: None } must sign[0m
+[1;38;5;9mProgram 11111111111111111111111111111111 failed: missing required signature for instruction[0m
+
+      at createTokenAccount (file:///mnt/contracts/tests/workspace.ts:125:11)
+      at Context.<anonymous> (file:///mnt/contracts/tests/workspace.ts:262:5)
+
+  2) NFT Hater Workspace
+       should fail burn with wrong treasury:
+     Error: [38;5;239mProgram 11111111111111111111111111111111 invoke [1][0m
+[38;5;239mAllocate: 'to' account Address { address: 9gnt37Zc2iMR5vUzwtCaQWQcM9T67qLZVAm4qVSKJ6bN, base: None } must sign[0m
+[1;38;5;9mProgram 11111111111111111111111111111111 failed: missing required signature for instruction[0m
+
+      at createTokenAccount (file:///mnt/contracts/tests/workspace.ts:125:11)
+      at Context.<anonymous> (file:///mnt/contracts/tests/workspace.ts:314:5)
+
+
+
+error: "ts-mocha" exited with code 2

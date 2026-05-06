@@ -1,0 +1,93 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BurnBox — Firestore Security Rules
+//
+// Collections:
+//   leaderboard/{walletAddress}      — burn scores, public read
+//   referrals/{walletAddress}        — referral stats per referrer wallet
+//   referrals/{walletAddress}/uses/{referredWallet} — per-referral detail
+//   referral_uses/{referredWallet}   — tracks which wallet referred a user
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    // ── Leaderboard ────────────────────────────────────────────────────────────
+    match /leaderboard/{walletAddress} {
+
+      function isOwnerOnCreate() {
+        return request.resource.data.uid == request.auth.uid;
+      }
+
+      function isOwnerOnUpdate() {
+        return resource.data.uid == request.auth.uid;
+      }
+
+      function isValidEntry() {
+        let d = request.resource.data;
+        return
+          d.wallet == walletAddress &&
+          d.wallet is string &&
+          d.wallet.size() >= 32 &&
+          d.wallet.size() <= 44 &&
+          d.walletShort is string &&
+          d.walletShort.size() <= 20 &&
+          d.uid is string &&
+          d.uid.size() > 0 &&
+          d.burned is number &&
+          d.burned > 0 &&
+          d.feeSol is number &&
+          d.feeSol >= 0 &&
+          d.signatures is list &&
+          d.signatures.size() <= 20;
+      }
+
+      function burnedOnlyIncreases() {
+        return request.resource.data.burned >= resource.data.burned;
+      }
+
+      function uidIsImmutable() {
+        return request.resource.data.uid == resource.data.uid;
+      }
+
+      allow read:   if true;
+      allow create: if isAuthed() && isOwnerOnCreate() && isValidEntry();
+      allow update: if isAuthed() && isOwnerOnUpdate() && isValidEntry()
+                    && burnedOnlyIncreases() && uidIsImmutable();
+      allow delete: if false;
+    }
+
+    // ── Referrals ──────────────────────────────────────────────────────────────
+    // Anyone authenticated can read referral docs (needed for code resolution).
+    // Writes are allowed from authenticated sessions — the SDK is the gatekeeper.
+    match /referrals/{walletAddress} {
+      allow read:  if isAuthed();
+      allow write: if isAuthed();
+
+      // Sub-collection: individual referred wallets under a referrer
+      match /uses/{referredWallet} {
+        allow read:  if isAuthed();
+        allow write: if isAuthed();
+      }
+    }
+
+    // ── Referral uses ──────────────────────────────────────────────────────────
+    // Tracks which wallet referred which — one doc per referred wallet.
+    // Read/write allowed for authenticated sessions.
+    match /referral_uses/{referredWallet} {
+      allow read:  if isAuthed();
+      allow write: if isAuthed();
+    }
+
+    // ── Deny all other collections ─────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
