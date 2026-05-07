@@ -1,8 +1,6 @@
-// FIRST import in main.tsx — sets up Buffer before any Solana code runs.
-// process is set in index.html (inline script, runs before all modules).
-// global is handled by vite define → globalThis.
-
 import { Buffer } from "buffer";
-(globalThis as Record<string, unknown>).Buffer = Buffer;
-
+(globalThis as any).Buffer = Buffer;
+if (!(globalThis as any).process) {
+  (globalThis as any).process = { env: { NODE_ENV: "production" }, browser: true, version: "", platform: "browser", nextTick: (fn: () => void) => setTimeout(fn, 0) };
+}
 export {};
