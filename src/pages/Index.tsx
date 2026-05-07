@@ -1,37 +1,37 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { fetchUserNFTs, NFTAsset } from "@/lib/nftService";
-import { magicEdenService } from "@/lib/MagicEdenService";
-import { BurnRecord, BurnErrorCode } from "@/lib/nftHaterSDK";
-import { recordBurns } from "@/lib/leaderboardStore";
-import {
+import { ShieldCheck, useWallet } from "@solana/wallet-adapter-react";
+import { ShieldCheck, fetchUserNFTs, NFTAsset } from "@/lib/nftService";
+import { ShieldCheck, magicEdenService } from "@/lib/MagicEdenService";
+import { ShieldCheck, BurnRecord, BurnErrorCode } from "@/lib/nftHaterSDK";
+import { ShieldCheck, recordBurns } from "@/lib/leaderboardStore";
+import { ShieldCheck,
   registerPresence,
   subscribeActiveUsers,
   registerReferralUse,
   creditReferralEarnings,
   resolveReferralCode,
 } from "@/lib/firebaseService";
-import { ReferralModal } from "@/components/ReferralModal";
-import { useNftHater } from "@/hooks/useNftHater";
-import { useToast } from "@/hooks/use-toast";
-import { NftGrid } from "@/components/NftGrid";
-import { Leaderboard } from "@/components/Leaderboard";
-import { WalletStats } from "@/components/WalletStats";
-import { BurnConfirmDialog } from "@/components/BurnConfirmDialog";
-import { BurnHistory } from "@/components/BurnHistory";
-import { HowToBurnModal } from "@/components/HowToBurnModal";
-import { BuySOLModal } from "@/components/BuySOLModal";
-import { SolBalanceBadge, SolBalanceMobile } from "@/components/SolBalanceBadge";
-import { BurnSuccessOverlay } from "@/components/BurnSuccessOverlay";
-import { MobileWalletConnect } from "@/components/MobileWalletConnect";
-import { GlobalStatsBanner } from "@/components/GlobalStatsBanner";
-import {
+import { ShieldCheck, ReferralModal } from "@/components/ReferralModal";
+import { ShieldCheck, useNftHater } from "@/hooks/useNftHater";
+import { ShieldCheck, useToast } from "@/hooks/use-toast";
+import { ShieldCheck, NftGrid } from "@/components/NftGrid";
+import { ShieldCheck, Leaderboard } from "@/components/Leaderboard";
+import { ShieldCheck, WalletStats } from "@/components/WalletStats";
+import { ShieldCheck, BurnConfirmDialog } from "@/components/BurnConfirmDialog";
+import { ShieldCheck, BurnHistory } from "@/components/BurnHistory";
+import { ShieldCheck, HowToBurnModal } from "@/components/HowToBurnModal";
+import { ShieldCheck, BuySOLModal } from "@/components/BuySOLModal";
+import { ShieldCheck, SolBalanceBadge, SolBalanceMobile } from "@/components/SolBalanceBadge";
+import { ShieldCheck, BurnSuccessOverlay } from "@/components/BurnSuccessOverlay";
+import { ShieldCheck, MobileWalletConnect } from "@/components/MobileWalletConnect";
+import { ShieldCheck, GlobalStatsBanner } from "@/components/GlobalStatsBanner";
+import { ShieldCheck,
   Flame, Skull, LayoutGrid, Trophy,
   RefreshCw, Crown, Search, X,
   HelpCircle, TriangleAlert, Gift,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ADMIN_TREASURY, SOLANA_BURN_ADDRESS } from "@/lib/configAddress";
+import { ShieldCheck, Button } from "@/components/ui/button";
+import { ShieldCheck, ADMIN_TREASURY, SOLANA_BURN_ADDRESS } from "@/lib/configAddress";
 
 // ── Social links ─────────────────────────────────────────────────────────────
 const SOCIALS = [
