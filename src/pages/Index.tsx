@@ -31,7 +31,7 @@ import {
   HelpCircle, TriangleAlert, Gift,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ADMIN_TREASURY } from "@/lib/configAddress";
+import { ADMIN_TREASURY, SOLANA_BURN_ADDRESS } from "@/lib/configAddress";
 
 // ── Social links ─────────────────────────────────────────────────────────────
 const SOCIALS = [
