@@ -17,7 +17,6 @@ export default defineConfig({
       crypto: "crypto-browserify",
       buffer: "buffer",
       util: "util",
-      // process/browser no longer exported in newer process package — use root
       process: "process",
     },
   },
@@ -34,36 +33,27 @@ export default defineConfig({
     commonjsOptions: { transformMixedEsModules: true },
     rollupOptions: {
       output: {
-        manualChunks: {
-          "solana-core": [
-            "@solana/web3.js",
-            "@solana/spl-token",
-            "@coral-xyz/anchor",
-          ],
-          "wallet-adapter": [
-            "@solana/wallet-adapter-react",
-            "@solana/wallet-adapter-react-ui",
-            "@solana/wallet-adapter-wallets",
-            "@solana/wallet-adapter-base",
-          ],
-          "firebase": [
-            "firebase/app",
-            "firebase/firestore",
-            "firebase/database",
-            "firebase/auth",
-          ],
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "framer": ["framer-motion"],
+        manualChunks: (id) => {
+          if (id.includes("@solana/web3.js") || id.includes("@solana/spl-token") || id.includes("@coral-xyz/anchor")) {
+            return "solana-core";
+          }
+          if (id.includes("@solana/wallet-adapter")) {
+            return "wallet-adapter";
+          }
+          if (id.includes("firebase")) {
+            return "firebase";
+          }
+          if (id.includes("react-dom") || id.includes("react-router-dom")) {
+            return "react-vendor";
+          }
+          if (id.includes("framer-motion")) {
+            return "framer";
+          }
         },
       },
     },
   },
   optimizeDeps: {
     include: ["buffer", "process"],
-    esbuildOptions: {
-      define: {
-        global: "globalThis",
-      },
-    },
   },
 });
