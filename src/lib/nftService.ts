@@ -6,6 +6,7 @@ import {
 } from "@solana/spl-token";
 import { Connection, PublicKey, type AccountInfo } from "@solana/web3.js";
 import { detectScam, type ScamResult } from "./scamDetector";
+import { HELIUS_RPC } from "./configAddress";
 
 export interface NFTAsset {
   id: string;             // mint address
@@ -25,9 +26,6 @@ export interface NFTAsset {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rawDasAsset?: any;        // original DAS response — kept for debugging / re-scoring
 }
-
-const HELIUS_RPC_URL =
-  "https://mainnet.helius-rpc.com/?api-key=dd39f964-79fe-4373-a22b-7cac000f163b";
 
 // Helius DAS page size — 1000 is the documented maximum
 const PAGE_LIMIT = 1000;
@@ -74,7 +72,7 @@ export async function filterLiveNFTs(
     return nfts;
   }
 
-  const connection = new Connection(HELIUS_RPC_URL, "confirmed");
+  const connection = new Connection(HELIUS_RPC, "confirmed");
   const dead = new Set<string>();
 
   for (let i = 0; i < nfts.length; i += VERIFY_BATCH) {
@@ -193,7 +191,7 @@ const mapAsset = (item: any): NFTAsset => {
 /** Fetch a single page from the Helius DAS API. Returns [] on any error. */
 async function fetchPage(ownerAddress: string, page: number): Promise<NFTAsset[]> {
   try {
-    const res = await fetch(HELIUS_RPC_URL, {
+    const res = await fetch(HELIUS_RPC, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       signal:  AbortSignal.timeout(20_000),

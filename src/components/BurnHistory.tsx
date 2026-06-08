@@ -5,17 +5,12 @@
 import { ExternalLink, Flame, Clock, CheckCircle2, Copy } from "lucide-react";
 import { BurnRecord } from "@/lib/nftHaterSDK";
 import { ADMIN_TREASURY } from "@/lib/configAddress";
-import { useState } from "react";
+import { truncateAddress, truncateSignature } from "@/lib/format";
+import { useClipboard } from "@/hooks/useClipboard";
 
 interface BurnHistoryProps {
   records: BurnRecord[];
 }
-
-const shortAddr = (addr: string) =>
-  addr.length > 12 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
-
-const shortSig = (sig: string) =>
-  sig.length > 12 ? `${sig.slice(0, 8)}…${sig.slice(-6)}` : sig;
 
 const formatTime = (ts: number) => {
   const d = new Date(ts);
@@ -23,15 +18,9 @@ const formatTime = (ts: number) => {
 };
 
 export const BurnHistory = ({ records }: BurnHistoryProps) => {
-  const [copied, setCopied] = useState<string | null>(null);
+  const { copied, copy } = useClipboard(1500);
 
   if (records.length === 0) return null;
-
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text).catch(() => {});
-    setCopied(text);
-    setTimeout(() => setCopied(null), 1500);
-  };
 
   // Deduplicate by signature (one sig = one tx = multiple mints possible)
   const bySignature = records.reduce<Map<string, BurnRecord[]>>((acc, r) => {
@@ -74,7 +63,7 @@ export const BurnHistory = ({ records }: BurnHistoryProps) => {
                 </span>
                 {recs.length > 1 && (
                   <span className="text-[10px] text-muted-foreground/50 font-mono truncate max-w-[120px]">
-                    {recs.slice(0, 2).map((r) => shortAddr(r.mint)).join(", ")}
+                    {recs.slice(0, 2).map((r) => truncateAddress(r.mint, 6, 4)).join(", ")}
                     {recs.length > 2 ? ` +${recs.length - 2}` : ""}
                   </span>
                 )}
@@ -83,20 +72,20 @@ export const BurnHistory = ({ records }: BurnHistoryProps) => {
                 <Clock className="w-2.5 h-2.5" />
                 {formatTime(recs[0].timestamp)}
                 <span className="text-muted-foreground/30">·</span>
-                <span>{shortSig(sig)}</span>
+                <span>{truncateSignature(sig)}</span>
               </div>
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-1 shrink-0">
               <button
-                onClick={() => handleCopy(sig)}
+                onClick={() => copy(sig)}
                 className="w-6 h-6 rounded flex items-center justify-center text-muted-foreground/40 hover:text-muted-foreground transition-colors"
                 title="Copy signature"
               >
                 <Copy className="w-3 h-3" />
               </button>
-              {copied === sig && (
+              {copied && (
                 <span className="text-[9px] text-emerald-400 font-mono absolute">✓</span>
               )}
               <a

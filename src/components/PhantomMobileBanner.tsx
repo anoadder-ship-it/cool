@@ -13,18 +13,14 @@
  */
 import { Smartphone, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { isMobileDevice } from "@/lib/device";
 
 const isPhantomBrowser = () =>
   typeof window !== "undefined" &&
-  // Phantom injects window.phantom or a solana provider flagged isPhantom
   (
     !!(window as unknown as Record<string, unknown>)["phantom"] ||
     !!((window as unknown as Record<string, { isPhantom?: boolean }>)["solana"]?.isPhantom)
   );
-
-const isMobileDevice = () =>
-  typeof navigator !== "undefined" &&
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 export function PhantomMobileBanner() {
   const [show, setShow] = useState(false);

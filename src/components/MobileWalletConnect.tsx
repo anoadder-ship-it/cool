@@ -13,11 +13,8 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { Smartphone } from "lucide-react";
-
-// ── helpers ────────────────────────────────────────────────────────────────
-const isMobileDevice = () =>
-  typeof navigator !== "undefined" &&
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+import { isMobileDevice } from "@/lib/device";
+import { truncateAddress } from "@/lib/format";
 
 /** Returns which wallet browser we're already inside, or null */
 const detectWalletBrowser = (): "phantom" | "solflare" | "backpack" | null => {
@@ -84,7 +81,7 @@ export function MobileWalletConnect() {
 
   // ── Already connected ──────────────────────────────────────────────────
   if (connected && publicKey) {
-    const short = `${publicKey.toString().slice(0, 4)}…${publicKey.toString().slice(-4)}`;
+    const short = truncateAddress(publicKey.toString());
     return (
       <button
         onClick={() => disconnect()}

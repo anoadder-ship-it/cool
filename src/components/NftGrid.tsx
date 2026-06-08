@@ -17,6 +17,7 @@ import {
 import type { NFTAsset } from "@/lib/nftService";
 import { NftDetailPopover } from "@/components/NftDetailPopover";
 import { useDragSelect } from "@/hooks/useDragSelect";
+import { computeRiskScore } from "@/lib/riskScore";
 
 interface NftGridProps {
   nfts: NFTAsset[];
@@ -78,10 +79,7 @@ function getBadgeVariant(nft: NFTAsset): BadgeVariant {
   if (nft.scam?.level === "confirmed")  return "scam";
   if (nft.scam?.level === "suspicious") return "suspicious";
   if (nft.isFungible)                   return "fungible";
-  // Fallback hash-based risk for unscored NFTs
-  const score = Math.abs(
-    nft.id.split("").reduce((s, c) => (s * 31 + c.charCodeAt(0)) | 0, 0)
-  ) % 100;
+  const score = computeRiskScore(nft.id);
   if (score >= 75) return "high";
   if (score >= 40) return "mid";
   return "low";

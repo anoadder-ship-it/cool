@@ -12,10 +12,9 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 
 import NotFound from './pages/NotFound';
 import Index from './pages/Index';
+import { HELIUS_RPC } from './lib/configAddress';
 
 import '@solana/wallet-adapter-react-ui/styles.css';
-
-const HELIUS_RPC = 'https://mainnet.helius-rpc.com/?api-key=dd39f964-79fe-4373-a22b-7cac000f163b';
 
 const App = () => {
     const wallets = useMemo(() => [

@@ -35,16 +35,8 @@ import {
   Copy, Check, ExternalLink, Users, TrendingUp,
   Coins, Share2, Gift, ChevronRight, Flame,
 } from "lucide-react";
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function truncate(addr: string) {
-  return addr.length > 12 ? `${addr.slice(0, 4)}…${addr.slice(-4)}` : addr;
-}
-
-function fmtSol(sol: number) {
-  return sol < 0.0001 ? "<0.0001" : sol.toFixed(4);
-}
+import { truncateAddress, formatSol } from "@/lib/format";
+import { useClipboard } from "@/hooks/useClipboard";
 
 function fmtDate(ms: number) {
   return new Date(ms).toLocaleDateString("nl-NL", {
@@ -83,7 +75,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
 
   const [stats,    setStats]   = useState<ReferralStats | null>(null);
   const [loading,  setLoading] = useState(true);
-  const [copied,   setCopied]  = useState(false);
+  const { copied, copy } = useClipboard(2000);
 
   const referralLink = stats
     ? `${window.location.origin}${window.location.pathname}?ref=${stats.code}`
@@ -109,16 +101,10 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
   }, [open, connected, wallet]);
 
   // ── Copy link ────────────────────────────────────────────────────────────────
-  const copyLink = useCallback(async () => {
+  const copyLink = useCallback(() => {
     if (!referralLink) return;
-    try {
-      await navigator.clipboard.writeText(referralLink);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback: select text
-    }
-  }, [referralLink]);
+    copy(referralLink);
+  }, [referralLink, copy]);
 
   // ── Native share ─────────────────────────────────────────────────────────────
   const shareLink = useCallback(async () => {
@@ -174,7 +160,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
               </span>{" "}
               of every burn fee your referrals pay —{" "}
               <span className="font-bold text-foreground/80">
-                {fmtSol(FEE_PER_BURN_SOL * REFERRAL_CUT_PCT)} SOL
+                {formatSol(FEE_PER_BURN_SOL * REFERRAL_CUT_PCT)} SOL
               </span>{" "}
               per NFT burned.
             </p>
@@ -195,14 +181,14 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
               <Tile
                 icon={Coins}
                 label="Total Earned"
-                value={`${fmtSol(stats?.totalEarned ?? 0)} ◎`}
+                value={`${formatSol(stats?.totalEarned ?? 0)} ◎`}
                 sub="SOL credited"
                 color="text-yellow-400"
               />
               <Tile
                 icon={TrendingUp}
                 label="Pending Payout"
-                value={`${fmtSol(stats?.pendingPayout ?? 0)} ◎`}
+                value={`${formatSol(stats?.pendingPayout ?? 0)} ◎`}
                 sub="next batch"
                 color="text-green-400"
               />
@@ -262,7 +248,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
             {[
               { icon: Share2,  text: "Share your link with friends or your community" },
               { icon: Flame,   text: `They visit BurnBox and burn their NFTs & scam tokens` },
-              { icon: Coins,   text: `You earn ${(REFERRAL_CUT_PCT * 100).toFixed(0)}% of their fees — ${fmtSol(FEE_PER_BURN_SOL * REFERRAL_CUT_PCT)} SOL per NFT burned` },
+              { icon: Coins,   text: `You earn ${(REFERRAL_CUT_PCT * 100).toFixed(0)}% of their fees — ${formatSol(FEE_PER_BURN_SOL * REFERRAL_CUT_PCT)} SOL per NFT burned` },
               { icon: TrendingUp, text: "Earnings accumulate and are paid out weekly to your wallet" },
             ].map(({ icon: Icon, text }, i) => (
               <div key={i} className="flex items-start gap-3">
@@ -296,7 +282,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-[11px] font-mono text-foreground/70 hover:text-primary transition-colors group"
                         >
-                          {truncate(r.wallet)}
+                          {truncateAddress(r.wallet)}
                           <ExternalLink className="w-2.5 h-2.5 opacity-0 group-hover:opacity-60 transition-opacity" />
                         </a>
                         <span className="text-[9px] text-muted-foreground/30 font-mono">
@@ -308,7 +294,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
                         {r.burns}
                       </div>
                       <span className="text-[11px] font-mono text-yellow-400/80 text-right">
-                        {fmtSol(r.earned)}
+                        {formatSol(r.earned)}
                       </span>
                     </div>
                   ))}
@@ -335,7 +321,7 @@ export function ReferralModal({ open, onOpenChange }: ReferralModalProps) {
             <ChevronRight className="w-3 h-3 text-muted-foreground/30 mt-0.5 shrink-0" />
             <p className="text-[10px] font-mono text-muted-foreground/35 leading-relaxed">
               Earnings are tracked on-chain and paid weekly to{" "}
-              <span className="text-muted-foreground/60">{truncate(wallet)}</span>.
+              <span className="text-muted-foreground/60">{truncateAddress(wallet)}</span>.
               Pending balance accumulates until payout threshold (0.01 SOL).
             </p>
           </div>

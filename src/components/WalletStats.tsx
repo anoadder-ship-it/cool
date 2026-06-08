@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { truncateAddress } from "@/lib/format";
 import {
   Flame, Trophy, Wallet, ExternalLink, Clock,
   TrendingDown, Hash, Skull, Crown, Medal,
@@ -96,7 +97,7 @@ export const WalletStats = () => {
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/30 bg-secondary/30 font-mono text-[10px] text-muted-foreground/40">
             <Wallet className="w-3 h-3" />
-            {publicKey?.toString().slice(0, 8)}…{publicKey?.toString().slice(-6)}
+            {publicKey ? truncateAddress(publicKey.toString(), 8, 6) : ""}
           </div>
         </div>
       </div>

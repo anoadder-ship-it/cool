@@ -1,5 +1,6 @@
 import { VersionedTransaction } from "@solana/web3.js";
 import type { PublicKey } from "@solana/web3.js";
+import { explorerTxUrl } from "./explorer";
 
 const JUPITER_API_URL = "https://api.jup.ag/swap/v2";
 const API_KEY = import.meta.env.VITE_JUPITER_API_KEY || "";
@@ -145,7 +146,7 @@ class JupiterSwapService {
       signature: result.signature,
       inputAmount: result.inputAmount ?? order.inAmount,
       outputAmount: result.outputAmount ?? order.outAmount,
-      explorerUrl: `https://explorer.solana.com/tx/${result.signature}?cluster=mainnet`,
+      explorerUrl: explorerTxUrl(result.signature),
     };
   }
 

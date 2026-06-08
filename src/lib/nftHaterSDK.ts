@@ -50,6 +50,7 @@ import {
   PREMIUM_FEE_SOL,
   HELIUS_RPC,
 } from "./configAddress";
+import { explorerTxUrl } from "./explorer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -102,8 +103,6 @@ const CHUNK_SIZE = 1;
 /** Pause between chunks — avoids RPC rate-limit */
 const INTER_CHUNK_MS = 800;
 
-const EXPLORER_TX = "https://explorer.solana.com/tx";
-
 // Bubblegum program — handles all cNFT operations
 const BUBBLEGUM_PROGRAM_ID = new PublicKey("BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY");
 // SPL Account Compression program
@@ -154,7 +153,6 @@ function classifyError(err: unknown): { code: BurnErrorCode; userFacing: string;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const sleep  = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-const txUrl  = (sig: string) => `${EXPLORER_TX}/${sig}?cluster=mainnet`;
 const getATA = (mint: PublicKey, owner: PublicKey, program: PublicKey): PublicKey =>
   getAssociatedTokenAddressSync(mint, owner, false, program);
 const solIx  = (from: PublicKey, to: PublicKey, lamports: number): TransactionInstruction =>
@@ -655,7 +653,7 @@ export class BurnBoxSDK {
             mint:        mintStr,
             mintName:    nftNames[mintStr],
             signature:   outcome.sig,
-            explorerUrl: txUrl(outcome.sig),
+            explorerUrl: explorerTxUrl(outcome.sig),
             burnAddress: isCompressed ? "Bubblegum tree (compressed burn)" : "SPL burn (token destroyed)",
             timestamp:   Date.now(),
             feeSol:      FEE_PER_BURN_SOL,
