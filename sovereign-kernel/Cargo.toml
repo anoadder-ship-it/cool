@@ -1,0 +1,35 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/vault-common",
+    "crates/vault-crypto",
+    "crates/vault-audit",
+    "crates/vault-tpm",
+    "crates/vault-core",
+    "crates/vault-db-tool",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+# Shared across crates
+chrono = { version = "0.4", features = ["serde"] }
+hmac = "0.12"
+rusqlite = { version = "0.31", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "1"
+tracing = "0.1"
+
+# Internal crates
+vault-common = { path = "crates/vault-common" }
+vault-crypto = { path = "crates/vault-crypto" }
+vault-audit = { path = "crates/vault-audit" }
+vault-tpm = { path = "crates/vault-tpm" }
+vault-core = { path = "crates/vault-core" }
+
+

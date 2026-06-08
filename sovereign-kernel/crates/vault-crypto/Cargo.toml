@@ -1,0 +1,13 @@
+[package]
+name = "vault-crypto"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+aes-gcm = "0.10"
+hmac = { workspace = true }
+rand = "0.8"
+sha2 = { workspace = true }
+subtle = "2"
+vault-common = { workspace = true }
+zeroize = { version = "1", features = ["derive"] }
