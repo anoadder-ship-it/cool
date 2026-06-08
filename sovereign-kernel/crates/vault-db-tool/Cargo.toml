@@ -1,0 +1,15 @@
+[package]
+name = "vault-db-tool"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "vault-db-tool"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+hex = "0.4"
+vault-audit = { workspace = true }
+vault-common = { workspace = true }
+vault-core = { workspace = true }

@@ -1,0 +1,23 @@
+[package]
+name = "vault-tpm"
+version.workspace = true
+edition.workspace = true
+
+[features]
+default = []
+tpm = ["tss-esapi"]
+
+[dependencies]
+chrono = { workspace = true }
+hmac = { workspace = true }
+rusqlite = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+tracing = { workspace = true }
+vault-audit = { workspace = true }
+vault-common = { workspace = true }
+vault-crypto = { workspace = true }
+
+# Optional real TPM support
+tss-esapi = { version = "7", optional = true }

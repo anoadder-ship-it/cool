@@ -1,0 +1,21 @@
+[package]
+name = "vault-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+chrono = { workspace = true }
+hmac = { workspace = true }
+r2d2 = "0.8"
+r2d2_sqlite = "0.24"
+rusqlite = { workspace = true }
+sha2 = { workspace = true }
+tracing = { workspace = true }
+vault-audit = { workspace = true }
+vault-common = { workspace = true }
+vault-crypto = { workspace = true }
+vault-tpm = { workspace = true }
+zeroize = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3"
