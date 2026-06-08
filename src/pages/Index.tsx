@@ -25,6 +25,7 @@ import { ShieldCheck, SolBalanceBadge, SolBalanceMobile } from "@/components/Sol
 import { ShieldCheck, BurnSuccessOverlay } from "@/components/BurnSuccessOverlay";
 import { ShieldCheck, MobileWalletConnect } from "@/components/MobileWalletConnect";
 import { ShieldCheck, GlobalStatsBanner } from "@/components/GlobalStatsBanner";
+import { computeRiskScore } from "@/lib/riskScore";
 import { ShieldCheck,
   Flame, Skull, LayoutGrid, Trophy,
   RefreshCw, Crown, Search, X,
@@ -77,8 +78,7 @@ type Tab        = "burn" | "leaderboard" | "stats";
 type SortKey    = "default" | "name" | "floor_desc" | "floor_asc" | "risk" | "scam";
 type ViewFilter = "all" | "scam" | "suspicious" | "nfts" | "tokens";
 
-const riskScore = (id: string) =>
-  Math.abs(id.split("").reduce((s, c) => (s * 31 + c.charCodeAt(0)) | 0, 0)) % 100;
+const riskScore = computeRiskScore;
 
 const isConfirmedScam  = (n: NFTAsset) => n.scam?.level === "confirmed";
 const isSuspiciousScam = (n: NFTAsset) => n.scam?.level === "suspicious";

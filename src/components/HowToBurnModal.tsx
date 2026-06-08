@@ -9,14 +9,15 @@ import {
   ShieldCheck, Eye, Code2, FileSearch,
 } from "lucide-react";
 import { SOLANA_BURN_ADDRESS, ADMIN_TREASURY, FEE_PER_BURN_SOL, PREMIUM_FEE_SOL } from "@/lib/configAddress";
+import { explorerAddressUrl } from "@/lib/explorer";
 
 interface HowToBurnModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const BURN_EXPLORER     = `https://explorer.solana.com/address/${SOLANA_BURN_ADDRESS}?cluster=mainnet`;
-const TREASURY_EXPLORER = `https://explorer.solana.com/address/${ADMIN_TREASURY}?cluster=mainnet`;
+const BURN_EXPLORER     = explorerAddressUrl(SOLANA_BURN_ADDRESS);
+const TREASURY_EXPLORER = explorerAddressUrl(ADMIN_TREASURY);
 
 const steps = [
   {

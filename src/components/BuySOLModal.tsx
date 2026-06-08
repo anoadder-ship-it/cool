@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { jupiterSwapService } from "@/lib/JupiterSwapService";
 import { useSolBalance } from "@/hooks/useSolBalance";
+import { explorerTxUrl } from "@/lib/explorer";
 
 interface BuySOLModalProps {
   open: boolean;
@@ -123,7 +124,7 @@ export const BuySOLModal = ({ open, onOpenChange, suggestedSol = 0.05, onSuccess
                 <span className="text-foreground font-semibold">{(balance ?? 0).toFixed(4)} SOL</span>
               </div>
               <a
-                href={`https://explorer.solana.com/tx/${result.sig}?cluster=mainnet`}
+                href={explorerTxUrl(result.sig)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg border border-emerald-600/20 bg-emerald-950/20 text-[11px] font-mono text-emerald-400 hover:border-emerald-500/40 transition-colors"

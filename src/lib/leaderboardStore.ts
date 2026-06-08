@@ -7,6 +7,7 @@
  *   Array of LeaderboardEntry — one per wallet/session
  */
 import { firestoreRecordBurns } from "./firebaseService";
+import { truncateAddress } from "./format";
 
 export interface LeaderboardEntry {
   wallet: string;       // full public key
@@ -52,7 +53,7 @@ export function recordBurns(
   if (!walletAddress || count <= 0) return;
 
   const all = readAll();
-  const short = `${walletAddress.slice(0, 4)}…${walletAddress.slice(-4)}`;
+  const short = truncateAddress(walletAddress);
 
   const idx = all.findIndex((e) => e.wallet === walletAddress);
   if (idx >= 0) {

@@ -31,6 +31,7 @@ import {
   type User,
 } from "firebase/auth";
 import type { LeaderboardEntry } from "./leaderboardStore";
+import { truncateAddress } from "./format";
 
 // ── Firebase init ─────────────────────────────────────────────────────────────
 
@@ -90,7 +91,7 @@ export async function firestoreRecordBurns(
 ): Promise<void> {
   if (!walletAddress || count <= 0) return;
   const user        = await ensureAnonymousAuth();
-  const walletShort = `${walletAddress.slice(0, 4)}…${walletAddress.slice(-4)}`;
+  const walletShort = truncateAddress(walletAddress);
   const docRef      = doc(db, COLLECTION, walletAddress);
 
   try {
@@ -227,7 +228,7 @@ export async function seedLeaderboard(
   entries: Array<{ wallet: string; burned: number; feeSol: number }>
 ): Promise<void> {
   for (const e of entries) {
-    const walletShort = `${e.wallet.slice(0, 4)}…${e.wallet.slice(-4)}`;
+    const walletShort = truncateAddress(e.wallet);
     await setDoc(doc(db, COLLECTION, e.wallet), {
       wallet: e.wallet, walletShort,
       burned: e.burned, feeSol: e.feeSol,

@@ -7,10 +7,9 @@
  *  - Fee breakdown: per-NFT fee + network cost
  *  - The burn address links to Solana Explorer so users can verify it themselves
  */
-import { useState } from "react";
 import {
   AlertTriangle, Flame, Skull, Crown, Zap,
-  ExternalLink, Info, ShieldCheck, KeyRound, ImageOff,
+  ExternalLink, Info, ShieldCheck, KeyRound,
 } from "lucide-react";
 import {
   Dialog,
@@ -21,6 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { SOLANA_BURN_ADDRESS, FEE_PER_BURN_SOL, PREMIUM_FEE_SOL, ADMIN_TREASURY } from "@/lib/configAddress";
 import type { NFTAsset } from "@/lib/nftService";
+import { NftImage } from "@/components/NftImage";
+import { truncateAddress } from "@/lib/format";
+import { explorerAddressUrl } from "@/lib/explorer";
 
 interface BurnConfirmDialogProps {
   open: boolean;
@@ -35,63 +37,37 @@ interface BurnConfirmDialogProps {
   selectedNfts?: NFTAsset[];
 }
 
-const BURN_EXPLORER = `https://explorer.solana.com/address/${SOLANA_BURN_ADDRESS}?cluster=mainnet`;
-const TREASURY_EXPLORER = `https://explorer.solana.com/address/${ADMIN_TREASURY}?cluster=mainnet`;
+const BURN_EXPLORER = explorerAddressUrl(SOLANA_BURN_ADDRESS);
+const TREASURY_EXPLORER = explorerAddressUrl(ADMIN_TREASURY);
 
 // ── Large single-NFT preview ────────────────────────────────────────
-const SinglePreview = ({ nft }: { nft: NFTAsset }) => {
-  const [err, setErr] = useState(false);
-  return (
-    <div className="shrink-0 w-24 h-24 rounded-xl overflow-hidden border border-primary/20 bg-secondary/60 shadow-[0_0_20px_hsl(var(--primary)/0.15)] relative">
-      {nft.image && !err ? (
-        <img
-          src={nft.image}
-          alt={nft.name}
-          className="w-full h-full object-cover"
-          onError={() => setErr(true)}
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <ImageOff className="w-7 h-7 text-muted-foreground/20" />
-        </div>
-      )}
-    </div>
-  );
-};
+const SinglePreview = ({ nft }: { nft: NFTAsset }) => (
+  <div className="shrink-0 w-24 h-24 rounded-xl overflow-hidden border border-primary/20 bg-secondary/60 shadow-[0_0_20px_hsl(var(--primary)/0.15)] relative">
+    <NftImage src={nft.image} alt={nft.name} fallbackIconClass="w-7 h-7 text-muted-foreground/20" />
+  </div>
+);
 
 // ── NFT image thumbnail with fallback ────────────────────────────────────────
-const NftThumb = ({ nft, burning }: { nft: NFTAsset; burning?: boolean }) => {
-  const [err, setErr] = useState(false);
-  return (
-    <div
-      className={`relative shrink-0 w-14 h-14 rounded-lg overflow-hidden border ${
-        burning ? "border-primary/60" : "border-border/40"
-      } bg-secondary/60 transition-all`}
-      title={nft.name}
-    >
-      {nft.image && !err ? (
-        <img
-          src={nft.image}
-          alt={nft.name}
-          loading="lazy"
-          onError={() => setErr(true)}
-          className={`w-full h-full object-cover ${
-            burning ? "brightness-50" : ""
-          }`}
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <ImageOff className="w-5 h-5 text-muted-foreground/20" />
-        </div>
-      )}
-      {burning && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Flame className="w-5 h-5 text-primary fire-glow" />
-        </div>
-      )}
-    </div>
-  );
-};
+const NftThumb = ({ nft, burning }: { nft: NFTAsset; burning?: boolean }) => (
+  <div
+    className={`relative shrink-0 w-14 h-14 rounded-lg overflow-hidden border ${
+      burning ? "border-primary/60" : "border-border/40"
+    } bg-secondary/60 transition-all`}
+    title={nft.name}
+  >
+    <NftImage
+      src={nft.image}
+      alt={nft.name}
+      className={`w-full h-full object-cover ${burning ? "brightness-50" : ""}`}
+      fallbackIconClass="w-5 h-5 text-muted-foreground/20"
+    />
+    {burning && (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Flame className="w-5 h-5 text-primary fire-glow" />
+      </div>
+    )}
+  </div>
+);
 
 export const BurnConfirmDialog = ({
   open,
@@ -108,8 +84,8 @@ export const BurnConfirmDialog = ({
     ? Math.round((burnProgress.current / burnProgress.total) * 100)
     : 0;
 
-  const shortBurnAddr = `${SOLANA_BURN_ADDRESS.slice(0, 8)}…${SOLANA_BURN_ADDRESS.slice(-6)}`;
-  const shortTreasury = `${ADMIN_TREASURY.slice(0, 6)}…${ADMIN_TREASURY.slice(-4)}`;
+  const shortBurnAddr = truncateAddress(SOLANA_BURN_ADDRESS, 8, 6);
+  const shortTreasury = truncateAddress(ADMIN_TREASURY, 6, 4);
 
   return (
     <Dialog open={open} onOpenChange={isBurning ? undefined : onOpenChange}>

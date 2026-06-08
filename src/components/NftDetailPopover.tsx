@@ -12,25 +12,19 @@ import {
 } from "@/components/ui/popover";
 import {
   Info, ExternalLink, Copy, Check,
-  ImageOff, Store, Shield, AlertTriangle,
+  Store, Shield, AlertTriangle,
   CheckCircle2, Flame, Tag, Hash,
 } from "lucide-react";
 import { NFTAsset } from "@/lib/nftService";
+import { NftImage } from "@/components/NftImage";
+import { computeRiskScore, getRiskLevel, type RiskLevel } from "@/lib/riskScore";
+import { explorerAddressUrl, magicEdenItemUrl } from "@/lib/explorer";
+import { useClipboard } from "@/hooks/useClipboard";
 
 interface NftDetailPopoverProps {
   nft: NFTAsset;
   floorData?: { floorSol: number; listedCount: number };
 }
-
-const riskScore = (id: string): number =>
-  Math.abs(id.split("").reduce((s, c) => (s * 31 + c.charCodeAt(0)) | 0, 0)) % 100;
-
-type RiskLevel = "high" | "mid" | "low";
-const getRisk = (score: number): { level: RiskLevel; label: string; color: string } => {
-  if (score >= 75) return { level: "high", label: "HIGH RISK",  color: "text-red-400" };
-  if (score >= 40) return { level: "mid",  label: "MEDIUM",     color: "text-yellow-400" };
-  return               { level: "low",  label: "LOW RISK",   color: "text-emerald-400" };
-};
 
 const RiskIcon = ({ level }: { level: RiskLevel }) => {
   if (level === "high") return <AlertTriangle className="w-3 h-3" />;
@@ -38,23 +32,16 @@ const RiskIcon = ({ level }: { level: RiskLevel }) => {
   return                       <CheckCircle2  className="w-3 h-3" />;
 };
 
-const EXPLORER_ADDR = "https://explorer.solana.com/address";
-const ME_ITEM       = "https://magiceden.io/item-details";
-
 export const NftDetailPopover = ({ nft, floorData }: NftDetailPopoverProps) => {
   const [open,    setOpen]    = useState(false);
-  const [copied,  setCopied]  = useState(false);
-  const [imgErr,  setImgErr]  = useState(false);
+  const { copied, copy } = useClipboard();
 
-  const score        = riskScore(nft.id);
-  const { level, label, color } = getRisk(score);
+  const score        = computeRiskScore(nft.id);
+  const { level, label, color } = getRiskLevel(score);
 
   const copyMint = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(nft.id).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    });
+    copy(nft.id);
   };
 
   const stopProp = (e: React.MouseEvent) => e.stopPropagation();
@@ -92,20 +79,7 @@ export const NftDetailPopover = ({ nft, floorData }: NftDetailPopoverProps) => {
       >
         {/* ── Image banner ── */}
         <div className="relative w-full h-44 bg-secondary/60 overflow-hidden">
-          {nft.image && !imgErr ? (
-            <img
-              src={nft.image}
-              alt={nft.name}
-              loading="lazy"
-              decoding="async"
-              onError={() => setImgErr(true)}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <ImageOff className="w-10 h-10 text-muted-foreground/15" />
-            </div>
-          )}
+          <NftImage src={nft.image} alt={nft.name} />
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
@@ -207,19 +181,19 @@ export const NftDetailPopover = ({ nft, floorData }: NftDetailPopoverProps) => {
           {/* External links */}
           <div className="flex gap-1.5 pt-0.5">
             <ExtLink
-              href={`${EXPLORER_ADDR}/${nft.id}?cluster=mainnet`}
+              href={explorerAddressUrl(nft.id)}
               label="Explorer"
               icon={<ExternalLink className="w-2.5 h-2.5" />}
             />
             {nft.collectionSymbol && (
               <ExtLink
-                href={`${ME_ITEM}/${nft.id}`}
+                href={magicEdenItemUrl(nft.id)}
                 label="Magic Eden"
                 icon={<Store className="w-2.5 h-2.5" />}
               />
             )}
             <ExtLink
-              href={`${EXPLORER_ADDR}/${nft.id}?cluster=mainnet`}
+              href={explorerAddressUrl(nft.id)}
               label="Burn history"
               icon={<Flame className="w-2.5 h-2.5" />}
             />
