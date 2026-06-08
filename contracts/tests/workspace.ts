@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-expressions */
 import { LiteSVM, FailedTransactionMetadata } from "litesvm";
 import * as anchor from "@coral-xyz/anchor";
 import BN from "bn.js";
