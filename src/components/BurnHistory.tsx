@@ -18,7 +18,7 @@ const formatTime = (ts: number) => {
 };
 
 export const BurnHistory = ({ records }: BurnHistoryProps) => {
-  const { copied, copy } = useClipboard(1500);
+  const { copiedValue, copy } = useClipboard(1500);
 
   if (records.length === 0) return null;
 
@@ -85,7 +85,7 @@ export const BurnHistory = ({ records }: BurnHistoryProps) => {
               >
                 <Copy className="w-3 h-3" />
               </button>
-              {copied && (
+              {copiedValue === sig && (
                 <span className="text-[9px] text-emerald-400 font-mono absolute">✓</span>
               )}
               <a

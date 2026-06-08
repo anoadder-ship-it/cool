@@ -8,18 +8,18 @@ import { useState, useCallback, useRef } from "react";
  *          sets `copied` to `true` for `resetMs` milliseconds.
  */
 export function useClipboard(resetMs = 1800) {
-  const [copied, setCopied] = useState(false);
+  const [copiedValue, setCopiedValue] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const copy = useCallback(
     (text: string) => {
       navigator.clipboard.writeText(text).catch(() => {});
-      setCopied(true);
+      setCopiedValue(text);
       if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => setCopied(false), resetMs);
+      timerRef.current = setTimeout(() => setCopiedValue(null), resetMs);
     },
     [resetMs]
   );
 
-  return { copied, copy };
+  return { copied: copiedValue !== null, copiedValue, copy };
 }
