@@ -69,9 +69,13 @@ class JupiterSwapService {
         headers: headers(),
         signal: AbortSignal.timeout(12_000),
       });
-      if (!res.ok) return null;
+      if (!res.ok) {
+        console.warn(`[JupiterSwap] getOrder failed: HTTP ${res.status}`);
+        return null;
+      }
       return await res.json();
-    } catch {
+    } catch (err) {
+      console.warn("[JupiterSwap] getOrder error:", err instanceof Error ? err.message : err);
       return null;
     }
   }
@@ -93,9 +97,13 @@ class JupiterSwapService {
         signal: AbortSignal.timeout(30_000),
       });
       const data: JupiterExecuteResponse = await res.json();
-      if (!res.ok || data.status === "Failed") return null;
+      if (!res.ok || data.status === "Failed") {
+        console.warn("[JupiterSwap] executeOrder failed:", data.error ?? `HTTP ${res.status}`);
+        return null;
+      }
       return data;
-    } catch {
+    } catch (err) {
+      console.warn("[JupiterSwap] executeOrder error:", err instanceof Error ? err.message : err);
       return null;
     }
   }
@@ -156,7 +164,8 @@ class JupiterSwapService {
       const order = await this.getOrder(USDC_MINT, SOL_MINT, raw);
       if (order) return parseFloat(order.outAmount) / 1e9;
       return 0;
-    } catch {
+    } catch (err) {
+      console.warn("[JupiterSwap] estimateSOLOut error:", err instanceof Error ? err.message : err);
       return 0;
     }
   }

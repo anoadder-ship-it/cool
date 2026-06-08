@@ -144,7 +144,7 @@ export default function Index() {
     // Resolve code → referrer wallet (async, non-blocking)
     resolveReferralCode(code).then((referrer) => {
       if (referrer) setReferrerWallet(referrer);
-    });
+    }).catch((err) => console.warn("[Index] Failed to resolve referral code:", err instanceof Error ? err.message : err));
     // Clean the URL so the code isn't re-processed on refresh
     const clean = new URL(window.location.href);
     clean.searchParams.delete("ref");
@@ -221,7 +221,8 @@ export default function Index() {
         // Could be RPC issue or genuinely empty wallet — we show empty state either way
         setRpcError(false);
       }
-    } catch {
+    } catch (err) {
+      console.warn("[Index] Failed to load NFTs:", err instanceof Error ? err.message : err);
       if (!ctrl.signal.aborted) {
         setRpcError(true);
         toast({
@@ -413,7 +414,8 @@ export default function Index() {
         recordBurns(wallet, successCount, feeSol, records.map((r) => r.signature));
         setBurnSuccess(successCount);
         // Credit referral earnings (non-blocking — fire and forget)
-        creditReferralEarnings(wallet, successCount, feeSol);
+        creditReferralEarnings(wallet, successCount, feeSol)
+          .catch((err) => console.warn("[Index] Failed to credit referral:", err instanceof Error ? err.message : err));
       }
 
       // Append to burn history

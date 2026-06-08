@@ -18,9 +18,13 @@ class MagicEdenService {
   private async fetchJson<T>(url: string): Promise<T | undefined> {
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) return undefined;
+      if (!res.ok) {
+        console.warn(`[MagicEden] fetchJson failed: HTTP ${res.status} for ${url}`);
+        return undefined;
+      }
       return (await res.json()) as T;
-    } catch {
+    } catch (err) {
+      console.warn("[MagicEden] fetchJson error:", err instanceof Error ? err.message : err);
       return undefined;
     }
   }
