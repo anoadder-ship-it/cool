@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { SOLANA_BURN_ADDRESS, FEE_PER_BURN_SOL, PREMIUM_FEE_SOL, ADMIN_TREASURY } from "@/lib/configAddress";
 import type { NFTAsset } from "@/lib/nftService";
 import { NftImage } from "@/components/NftImage";
-import { truncateAddress, truncateSignature } from "@/lib/format";
+import { truncateAddress } from "@/lib/format";
 import { explorerAddressUrl } from "@/lib/explorer";
 
 interface BurnConfirmDialogProps {
@@ -84,7 +84,7 @@ export const BurnConfirmDialog = ({
     ? Math.round((burnProgress.current / burnProgress.total) * 100)
     : 0;
 
-  const shortBurnAddr = truncateSignature(SOLANA_BURN_ADDRESS);
+  const shortBurnAddr = truncateAddress(SOLANA_BURN_ADDRESS, 8, 6);
   const shortTreasury = truncateAddress(ADMIN_TREASURY, 6, 4);
 
   return (
