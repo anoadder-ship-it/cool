@@ -71,6 +71,7 @@ export async function filterLiveNFTs(
   try {
     owner = new PublicKey(ownerAddress);
   } catch {
+    console.warn("[nftService] Invalid owner address, skipping verification:", ownerAddress);
     return nfts;
   }
 
@@ -82,11 +83,11 @@ export async function filterLiveNFTs(
 
     const legacyATAs: (PublicKey | null)[] = slice.map((n) => {
       try { return getAssociatedTokenAddressSync(new PublicKey(n.id), owner, false, TOKEN_PROGRAM_ID); }
-      catch { return null; }
+      catch { console.warn(`[nftService] Invalid mint for legacy ATA: ${n.id}`); return null; }
     });
     const t2022ATAs: (PublicKey | null)[] = slice.map((n) => {
       try { return getAssociatedTokenAddressSync(new PublicKey(n.id), owner, false, TOKEN_2022_PROGRAM_ID); }
-      catch { return null; }
+      catch { console.warn(`[nftService] Invalid mint for Token-2022 ATA: ${n.id}`); return null; }
     });
 
     const DUMMY = new PublicKey("11111111111111111111111111111111");
@@ -98,8 +99,8 @@ export async function filterLiveNFTs(
     let infos: (AccountInfo<Buffer> | null)[];
     try {
       infos = await connection.getMultipleAccountsInfo(keys, "confirmed");
-    } catch {
-      // RPC error — fail open, keep entire batch
+    } catch (err) {
+      console.warn("[nftService] RPC error verifying batch, keeping all:", err instanceof Error ? err.message : err);
       continue;
     }
 
@@ -125,7 +126,8 @@ export async function filterLiveNFTs(
       try {
         const unpacked = unpackAccount(ata, info, program);
         return unpacked.amount > BigInt(0) ? "live" : "dead";
-      } catch {
+      } catch (err) {
+        console.warn("[nftService] Failed to unpack ATA:", err instanceof Error ? err.message : err);
         return "absent";
       }
     };
@@ -217,12 +219,16 @@ async function fetchPage(ownerAddress: string, page: number): Promise<NFTAsset[]
       }),
     });
 
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.warn(`[nftService] DAS fetchPage ${page} failed: HTTP ${res.status}`);
+      return [];
+    }
     const json = await res.json();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const items: any[] = json?.result?.items ?? [];
     return items.map(mapAsset).filter((n) => n.id);
-  } catch {
+  } catch (err) {
+    console.warn(`[nftService] DAS fetchPage ${page} error:`, err instanceof Error ? err.message : err);
     return [];
   }
 }

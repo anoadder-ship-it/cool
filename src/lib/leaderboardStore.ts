@@ -27,7 +27,8 @@ function readAll(): LeaderboardEntry[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     return JSON.parse(raw) as LeaderboardEntry[];
-  } catch {
+  } catch (err) {
+    console.warn("[leaderboardStore] Failed to read localStorage:", err instanceof Error ? err.message : err);
     return [];
   }
 }
@@ -35,8 +36,8 @@ function readAll(): LeaderboardEntry[] {
 function writeAll(entries: LeaderboardEntry[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  } catch {
-    // Storage quota — silently ignore
+  } catch (err) {
+    console.warn("[leaderboardStore] Failed to write localStorage (quota?):", err instanceof Error ? err.message : err);
   }
 }
 

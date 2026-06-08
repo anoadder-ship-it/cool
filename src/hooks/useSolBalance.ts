@@ -17,8 +17,8 @@ export const useSolBalance = () => {
     try {
       const lamports = await connection.getBalance(publicKey, "confirmed");
       setBalance(lamports / LAMPORTS_PER_SOL);
-    } catch {
-      // silently ignore — stale value stays shown
+    } catch (err) {
+      console.warn("[useSolBalance] Failed to refresh balance:", err instanceof Error ? err.message : err);
     } finally {
       setLoading(false);
     }

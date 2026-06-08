@@ -177,14 +177,14 @@ export class BurnBoxSDK {
 
   async isNetworkHealthy(): Promise<boolean> {
     try { return (await this.connection.getSlot("finalized")) > 0; }
-    catch { return false; }
+    catch (err) { console.warn("[BurnBox] Network health check failed:", err instanceof Error ? err.message : err); return false; }
   }
 
   async getSolBalance(account?: PublicKey): Promise<number> {
     const target = account ?? this.wallet.publicKey;
     if (!target) return 0;
     try { return (await this.connection.getBalance(target, "confirmed")) / LAMPORTS_PER_SOL; }
-    catch { return 0; }
+    catch (err) { console.warn("[BurnBox] Failed to fetch SOL balance:", err instanceof Error ? err.message : err); return 0; }
   }
 
   async assertBalance(nftCount: number, premium = false): Promise<void> {
@@ -252,8 +252,8 @@ export class BurnBoxSDK {
     let unpacked: ReturnType<typeof unpackAccount>;
     try {
       unpacked = unpackAccount(userATA, rawInfo, tokenProgram);
-    } catch {
-      // Malformed account data — skip this NFT
+    } catch (err) {
+      console.warn("[BurnBox] Malformed ATA data for", userATA.toString(), err instanceof Error ? err.message : err);
       return null;
     }
 
@@ -263,8 +263,9 @@ export class BurnBoxSDK {
     try {
       const mintInfo = await getMint(this.connection, mint, "confirmed", tokenProgram);
       decimals = mintInfo.decimals;
-    } catch {
-      decimals = 0; // NFTs are always 0 decimals — safe fallback
+    } catch (err) {
+      console.warn("[BurnBox] getMint failed, defaulting decimals=0:", err instanceof Error ? err.message : err);
+      decimals = 0;
     }
 
     return { tokenProgram, amount: unpacked.amount, decimals, userATA };
@@ -631,7 +632,7 @@ export class BurnBoxSDK {
 
     const mints: PublicKey[] = [];
     for (const addr of mintAddresses) {
-      try { mints.push(new PublicKey(addr)); } catch { /* skip invalid */ }
+      try { mints.push(new PublicKey(addr)); } catch { console.warn("[BurnBox] Skipping invalid mint address:", addr); }
     }
 
     const result: BurnBatchResult = {

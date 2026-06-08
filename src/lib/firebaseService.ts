@@ -184,7 +184,7 @@ export function subscribeWalletStats(
       const rankSnap = await getDocs(q);
       const idx      = rankSnap.docs.findIndex((d) => d.id === walletAddress);
       rank = idx >= 0 ? idx + 1 : null;
-    } catch { rank = null; }
+    } catch (err) { console.warn("[firebaseService] Rank query failed:", err instanceof Error ? err.message : err); rank = null; }
 
     onUpdate({
       wallet:      data.wallet,
@@ -394,7 +394,8 @@ export function subscribeReferralStats(
         totalRefs:     data.totalRefs     ?? 0,
         referrals,
       });
-    } catch {
+    } catch (err) {
+      console.warn("[firebaseService] Failed to fetch referral uses:", err instanceof Error ? err.message : err);
       onUpdate(null);
     }
   }, (err) => {
