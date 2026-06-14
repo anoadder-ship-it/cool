@@ -1,4 +1,4 @@
-const BASE_URL = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2";
+const BASE_URL = import.meta.env.VITE_MAGIC_EDEN_PROXY_URL || "https://api-mainnet.magiceden.dev/v2";
 
 // Cache to avoid hammering ME for the same collection repeatedly
 const statsCache = new Map<string, { floorSol: number; listedCount: number; fetchedAt: number }>();
