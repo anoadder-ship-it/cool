@@ -9,6 +9,7 @@ import {
     TrustWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import NotFound from './pages/NotFound';
 import Index from './pages/Index';
@@ -34,6 +35,7 @@ const App = () => {
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                     <Toaster />
+                    <SpeedInsights />
                 </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>
