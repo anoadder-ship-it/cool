@@ -1,21 +1,21 @@
-# Security Policy
+# Security Policy (Beveiligingsbeleid)
 
-## Supported Versions
+## Juridische Waarschuwing / Legal Notice
+Elke vorm van ongeoorloofde toegang, misbruik van ontdekte kwetsbaarheden, datadiefstal, of het publiekelijk openbaar maken van beveiligingslekken zonder voorafgaande schriftelijke toestemming is strikt verboden. 
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Bij overtreding, kwaadwillend handelen of het schenden van de vertrouwelijkheid (Responsible Disclosure) zal onmiddellijk aangifte worden gedaan bij de bevoegde autoriteiten. Gerechtelijke vervolging, civielrechtelijke procedures en het eisen van maximale boetes en schadevergoedingen zullen onherroepelijk worden ingezet conform de heersende wetgeving (waaronder de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de wetgeving inzake computercriminaliteit).
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+---
 
-## Reporting a Vulnerability
+## Kwetsbaarheden Melden (Reporting a Vulnerability)
+Indien u een beveiligingslek heeft gevonden, verzoeken wij u dit uitsluitend privé en vertrouwelijk aan ons te melden om schade te voorkomen.
 
-Use this section to tell people how to report a vulnerability.
+Stuur uw bevindingen per e-mail naar:
+**uw-github-anoadder@gmail.com**
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Vermeld in uw e-mail:
+- Een gedetailleerde beschrijving van het lek.
+- Stappen of een Proof of Concept (PoC) om het probleem te herhalen.
+- De potentiële impact van de kwetsbaarheid.
+
+Wij streven ernaar om binnen 48 uur te reageren en het probleem zo snel mogelijk op te lossen. Wij danken u voor uw professionele medewerking binnen de kaders van de wet.
