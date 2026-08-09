@@ -27,7 +27,7 @@ export interface NFTAsset {
 }
 
 const HELIUS_RPC_URL =
-  "https://mainnet.helius-rpc.com/?api-key=dd39f964-79fe-4373-a22b-7cac000f163b";
+  `https://mainnet.helius-rpc.com/?api-key=${import.meta.env.VITE_HELIUS_API_KEY || ''}`;
 
 // Helius DAS page size — 1000 is the documented maximum
 const PAGE_LIMIT = 1000;

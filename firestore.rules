@@ -65,24 +65,30 @@ service cloud.firestore {
 
     // ── Referrals ──────────────────────────────────────────────────────────────
     // Anyone authenticated can read referral docs (needed for code resolution).
-    // Writes are allowed from authenticated sessions — the SDK is the gatekeeper.
+    // Writes: only the doc owner (matching uid) can create/update their own referral.
     match /referrals/{walletAddress} {
       allow read:  if isAuthed();
-      allow write: if isAuthed();
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow update: if isAuthed() && resource.data.uid == request.auth.uid;
+      allow delete: if false;
 
       // Sub-collection: individual referred wallets under a referrer
       match /uses/{referredWallet} {
         allow read:  if isAuthed();
-        allow write: if isAuthed();
+        allow create: if isAuthed();
+        allow update: if isAuthed();
+        allow delete: if false;
       }
     }
 
     // ── Referral uses ──────────────────────────────────────────────────────────
     // Tracks which wallet referred which — one doc per referred wallet.
-    // Read/write allowed for authenticated sessions.
+    // Only allow create (one-time link), prevent overwrites.
     match /referral_uses/{referredWallet} {
-      allow read:  if isAuthed();
-      allow write: if isAuthed();
+      allow read:   if isAuthed();
+      allow create: if isAuthed() && !exists(/databases/$(database)/documents/referral_uses/$(referredWallet));
+      allow update: if false;
+      allow delete: if false;
     }
 
     // ── Deny all other collections ─────────────────────────────────────────────

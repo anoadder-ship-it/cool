@@ -13,7 +13,7 @@ export const FEE_PER_BURN_SOL = 0.005; // charged per NFT burned
 export const PREMIUM_FEE_SOL  = 0.1;  // one-time flat fee for full wallet clean
 
 // Helius RPC endpoint
-export const HELIUS_RPC = "https://mainnet.helius-rpc.com/?api-key=dd39f964-79fe-4373-a22b-7cac000f163b";
+export const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${import.meta.env.VITE_HELIUS_API_KEY || ''}`;
 
 // Short display version of burn address for UI
 export const BURN_ADDRESS_SHORT = "1nc1ne…1111";

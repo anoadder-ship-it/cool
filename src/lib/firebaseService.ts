@@ -35,14 +35,14 @@ import type { LeaderboardEntry } from "./leaderboardStore";
 // ── Firebase init ─────────────────────────────────────────────────────────────
 
 const firebaseConfig = {
-  apiKey:            "AIzaSyBPpCs76CVfeA8qjoW8DjpmRrxWsJk71l8",
-  authDomain:        "burnbox-2217f.firebaseapp.com",
-  projectId:         "burnbox-2217f",
-  storageBucket:     "burnbox-2217f.firebasestorage.app",
-  messagingSenderId: "88522013334",
-  appId:             "1:88522013334:web:dc0c5133c7cd2a84fce0b7",
-  measurementId:     "G-Q785L6F978",
-  databaseURL:       "https://burnbox-2217f-default-rtdb.europe-west1.firebasedatabase.app",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY            || "",
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN        || "",
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID         || "",
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET     || "",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID             || "",
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID     || "",
+  databaseURL:       import.meta.env.VITE_FIREBASE_DATABASE_URL       || "",
 };
 
 const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
@@ -270,8 +270,9 @@ export async function getOrCreateReferral(walletAddress: string): Promise<Referr
   const snap   = await getDoc(docRef);
 
   if (!snap.exists()) {
+    const user = await ensureAnonymousAuth();
     await setDoc(docRef, {
-      code, wallet: walletAddress,
+      code, wallet: walletAddress, uid: user.uid,
       totalEarned: 0, pendingPayout: 0, totalRefs: 0,
       createdAt: serverTimestamp(),
     });
